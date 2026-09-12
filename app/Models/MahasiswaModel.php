@@ -1,0 +1,75 @@
+<?php
+require_once __DIR__ . '/../Core/Model.php';
+
+class MahasiswaModel extends Model {
+    protected $table = 'mahasiswa';
+
+    // READ (Gabung Tabel)
+    public function getAllWithProdi() {
+        $query = "SELECT m.*, p.nama AS nama_prodi 
+                  FROM mahasiswa m 
+                  JOIN prodi p ON m.prodi_id = p.id";
+        $stmt = $this->pdo->prepare($query);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+
+    // READ BY ID (Untuk Edit)
+    public function getById($id) {
+        $query = "SELECT * FROM mahasiswa WHERE id = :id";
+        $stmt = $this->pdo->prepare($query);
+        $stmt->execute([':id' => $id]);
+        return $stmt->fetch();
+    }
+
+    // CREATE (Tambah Data)
+    public function insert($data) {
+        $query = "INSERT INTO mahasiswa (nim, nama, email, prodi_id, angkatan, status) 
+                  VALUES (:nim, :nama, :email, :prodi_id, :angkatan, :status)";
+        $stmt = $this->pdo->prepare($query);
+        return $stmt->execute([
+            ':nim'      => $data['nim'],
+            ':nama'     => $data['nama'],
+            ':email'    => $data['email'],
+            ':prodi_id' => $data['prodi_id'],
+            ':angkatan' => $data['angkatan'],
+            ':status'   => $data['status']
+        ]);
+    }
+
+    // UPDATE (Edit Data)
+    public function update($id, $data) {
+        $query = "UPDATE mahasiswa SET nim = :nim, nama = :nama, email = :email, 
+                  prodi_id = :prodi_id, angkatan = :angkatan, status = :status 
+                  WHERE id = :id";
+        $data[':id'] = $id;
+        $stmt = $this->pdo->prepare($query);
+        return $stmt->execute([
+            ':id'       => $id,
+            ':nim'      => $data['nim'],
+            ':nama'     => $data['nama'],
+            ':email'    => $data['email'],
+            ':prodi_id' => $data['prodi_id'],
+            ':angkatan' => $data['angkatan'],
+            ':status'   => $data['status']
+        ]);
+    }
+
+    // DELETE (Hapus Data)
+    public function delete($id) {
+        $query = "DELETE FROM mahasiswa WHERE id = :id";
+        $stmt = $this->pdo->prepare($query);
+        return $stmt->execute([':id' => $id]);
+    }
+    // SEARCH (Cari Data)
+    public function search($keyword) {
+    $query = "SELECT m.*, p.nama AS nama_prodi 
+              FROM mahasiswa m 
+              LEFT JOIN prodi p ON m.prodi_id = p.id 
+              WHERE m.nama LIKE :keyword OR m.nim LIKE :keyword";
+              
+    $stmt = $this->pdo->prepare($query);
+    $stmt->execute([':keyword' => '%' . $keyword . '%']);
+    return $stmt->fetchAll();
+    }
+}
