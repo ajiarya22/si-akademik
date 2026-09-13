@@ -6,7 +6,7 @@
     <title>Login - Praktikum Acara 6</title>
 </head>
 <body>
-    <h2>Form Login</h2>
+    <h2>Form Login</h2><!-- Halaman Utama Login Sistem -->
 
     <!-- Tampilkan Flash Message jika ada -->
     <?php if (isset($_SESSION['flash'])): ?>
